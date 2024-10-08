@@ -1,0 +1,30 @@
+<<<<<<< HEAD
+:root {
+    --theme-dropdown-text: #495057;
+    --theme-dropdown-background: #FFFFFF;
+}
+
+.p-dropdown .p-dropdown-label {
+    color: var(--theme-dropdown-text);
+    background: var(--theme-dropdown-background);
+}
+
+.p-dropdown-filter-container input {
+    background-color: #FFFFFF;
+    color: #495057;
+=======
+:root {
+    --theme-dropdown-text: #495057;
+    --theme-dropdown-background: #FFFFFF;
+}
+
+.p-dropdown .p-dropdown-label {
+    color: var(--theme-dropdown-text);
+    background: var(--theme-dropdown-background);
+}
+
+.p-dropdown-filter-container input {
+    background-color: #FFFFFF;
+    color: #495057;
+>>>>>>> 875c5fc9aea45878e7ea32c9f1c2b5ffdcf2fe80
+}
