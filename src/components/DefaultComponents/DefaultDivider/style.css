@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 :root {
     --theme-divider-line: #dee2e6;
     --theme-divider-background: #FFFFFF;
@@ -15,22 +14,4 @@
 .divider-full-line {
     border-bottom: 1px solid rgba(128, 128, 128, 0.2);
     margin: 0.800rem 0;
-=======
-:root {
-    --theme-divider-line: #dee2e6;
-    --theme-divider-background: #FFFFFF;
-}
-
-.p-divider.p-divider-horizontal:before {
-    border-top: 1px solid var(--theme-divider-line);
-}
-
-.p-divider .p-divider-content {
-    background-color: var(--theme-divider-background);
-}
-
-.divider-full-line {
-    border-bottom: 1px solid rgba(128, 128, 128, 0.2);
-    margin: 0.800rem 0;
->>>>>>> 875c5fc9aea45878e7ea32c9f1c2b5ffdcf2fe80
 }

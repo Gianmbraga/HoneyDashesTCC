@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 ::placeholder {
   color: #535353;
   opacity: 1;
@@ -6,13 +5,4 @@
 
 .theme-input-error-validation {
   border: 1px solid red;
-=======
-::placeholder {
-  color: #535353;
-  opacity: 1;
-}
-
-.theme-input-error-validation {
-  border: 1px solid red;
->>>>>>> 875c5fc9aea45878e7ea32c9f1c2b5ffdcf2fe80
 }

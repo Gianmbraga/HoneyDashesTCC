@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 :root {
     --theme-default-card-background: #FFFFFF;
     --theme-default-card-span: #343a40;
@@ -21,27 +20,3 @@
 .default-card span {
     color: var(--theme-default-card-span);
 }
-=======
-:root {
-    --theme-default-card-background: #FFFFFF;
-    --theme-default-card-span: #343a40;
-    --theme-default-card-shadow: rgba(0, 0, 0, 0.15); /* Cor da sombra */
-    --theme-default-card-border: rgba(0, 0, 0, 0.1); /* Cor da borda */
-}
-
-.default-card {
-    background: var(--theme-default-card-background);
-    border: 1px solid var(--theme-default-card-border); /* Definindo borda */
-    box-shadow: 0 4px 8px var(--theme-default-card-shadow); /* Sombreamento suave */
-    transition: box-shadow 0.3s ease; /* Transição suave no hover */
-    border-radius: 10px;
-}
-
-.default-card:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra mais forte ao passar o mouse */
-}
-
-.default-card span {
-    color: var(--theme-default-card-span);
-}
->>>>>>> 875c5fc9aea45878e7ea32c9f1c2b5ffdcf2fe80
