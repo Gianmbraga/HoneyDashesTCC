@@ -1,0 +1,14 @@
+:root {
+    --theme-dropdown-text: #495057;
+    --theme-dropdown-background: #FFFFFF;
+}
+
+.p-dropdown .p-dropdown-label {
+    color: var(--theme-dropdown-text);
+    background: var(--theme-dropdown-background);
+}
+
+.p-dropdown-filter-container input {
+    background-color: #FFFFFF;
+    color: #495057;
+}

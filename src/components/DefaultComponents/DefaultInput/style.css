@@ -1,0 +1,8 @@
+::placeholder {
+  color: #535353;
+  opacity: 1;
+}
+
+.theme-input-error-validation {
+  border: 1px solid red;
+}
