@@ -6,32 +6,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ClassifierService {
 
     private final CsvReaderService csvReaderService;
-    private final ClassifierApiService classifierApiService;
+    private final ClassifierStrategy classifierStrategy;
 
     @Autowired
-    public ClassifierService(CsvReaderService csvReaderService, ClassifierApiService classifierApiService) {
+    public ClassifierService(CsvReaderService csvReaderService, ClassifierStrategy classifierStrategy) {
         this.csvReaderService = csvReaderService;
-        this.classifierApiService = classifierApiService;
+        this.classifierStrategy = classifierStrategy;
     }
 
     public List<ClassifierResult> classifyFromCsv(String csvFileName) {
-        // Log para indicar início do processo
         System.out.println("Iniciando classificação a partir do CSV: " + csvFileName);
 
         // 1. Ler o CSV e obter os ataques
         List<CyberAttack> attacks = csvReaderService.readCsvFile(csvFileName);
         System.out.println("Número de ataques lidos: " + attacks.size());
 
-        // 2. Enviar os ataques para o classificador externo e obter os resultados
-        List<ClassifierResult> results = classifierApiService.sendAttacksToClassifier(attacks);
-        System.out.println("Número de resultados recebidos: " + results.size());
-
-        return results;
+        // 2. Enviar os ataques para o classificador (real ou mock)
+        return attacks.stream()
+                .map(attack -> classifierStrategy.classify(attack))
+                .collect(Collectors.toList());
     }
 }
-
