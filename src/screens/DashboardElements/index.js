@@ -16,7 +16,7 @@ import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts';
 import { dashboardMetricasAPI } from "../../services/DashBoardMetricasAPI";
 
-
+ 
 
 const DashboardElements = () => {
 
