@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+html, body {
+  overflow-x: hidden;  /* Remove o scroll horizontal */
+  overflow-y: hidden;  /* Remove o scroll vertical */
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

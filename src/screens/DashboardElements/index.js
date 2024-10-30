@@ -9,15 +9,16 @@ import DefaultColumn from "../../components/DefaultComponents/DefaultColumn";
 import DefaultRow from "../../components/DefaultComponents/DefaultRow";
 import DefaultLabel from "../../components/DefaultComponents/DefaultLabel";
 
-import DefaultCard from "../../components/DefaultComponents/Default Card";
+import DefaultCard from "../../components/DefaultComponents/DefaultCard";
 import DefaultTitle from "../../components/DefaultComponents/DefaultTitle";
 
 import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts';
+import { dashboardMetricasAPI } from "../../services/DashBoardMetricasAPI";
 
 
 
-const Login = () => {
+const DashboardElements = () => {
 
     // useEffect(async () => {
 
@@ -107,10 +108,25 @@ const Login = () => {
     }, [])
 
 
+    const fillGruposAcesso = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getAll();
+        console.log(response)
+            // if(response.success && response.data){
+            //     setGruposAcesso(response.data);
+            // }
+
+        setIsLoading(false);
+
+    }
+
     const mountGraphBarAtaques = (labels, data) => {
         var optionsTopOportunidades = {
             chart: {
                 type: 'bar',
+                height: 350,
             },
             title: {
                 text: 'Ataques',
@@ -174,7 +190,8 @@ const Login = () => {
                 plotBackgroundColor: null,
                 plotBorderWidth: null,
                 plotShadow: false,
-                type: 'pie'
+                type: 'pie',
+                height: 350,
             },
             title: {
                 text: 'Maiores Fatores',
@@ -365,4 +382,4 @@ const Login = () => {
     )
 }
 
-export default Login;
+export default DashboardElements;

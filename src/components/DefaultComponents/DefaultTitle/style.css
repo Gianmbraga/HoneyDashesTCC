@@ -4,8 +4,9 @@
     align-items: center;
     background-color: var(--theme-background);
     padding: 1rem;
-    border-radius: 8px;
+    /* border-radius: 8px; */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: black;
 }
 
 #dashboard-content-title-left {
@@ -58,4 +59,11 @@
 #dashboard-time i {
     margin-right: 0.5rem;
     color: var(--theme-text);
+}
+
+.divider {
+    background-color: white;
+    width: 1px;
+    height: 30px;
+    margin-right: 10px;
 }
