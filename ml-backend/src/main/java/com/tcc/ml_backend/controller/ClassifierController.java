@@ -46,4 +46,12 @@ public class ClassifierController {
             return ResponseEntity.status(500).build(); // Erro interno do servidor
         }
     }
+    @RestController
+    public class HomeController {
+        @GetMapping("/")
+        public String home() {
+            return "Aplicação rodando com sucesso!";
+        }
+    }
+
 }

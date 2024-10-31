@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/HoneyDashesTCC.iml" filepath="$PROJECT_DIR$/.idea/HoneyDashesTCC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ml-backend.main.iml" filepath="$PROJECT_DIR$/.idea/modules/ml-backend.main.iml" />
     </modules>
   </component>
 </project>
