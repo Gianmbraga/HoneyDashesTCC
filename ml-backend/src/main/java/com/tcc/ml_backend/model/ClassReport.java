@@ -1,43 +1,32 @@
 package com.tcc.ml_backend.model;
 
-import java.util.Map;
-
 public class ClassReport {
-    private Map<String, ReportMetrics> reports; // Relatórios por classe, como "Analysis", "Backdoor", etc.
-    private double accuracy;                    // Campo "accuracy"
-    private ReportMetrics macroAvg;            // Campo "macro avg"
-    private ReportMetrics weightedAvg;         // Campo "weighted avg"
 
-    // Getters e Setters
-    public Map<String, ReportMetrics> getReports() {
-        return reports;
+    private double precision;
+    private double recall;
+    private double f1Score;
+
+    public double getPrecision() {
+        return precision;
     }
 
-    public void setReports(Map<String, ReportMetrics> reports) {
-        this.reports = reports;
+    public void setPrecision(double precision) {
+        this.precision = precision;
     }
 
-    public double getAccuracy() {
-        return accuracy;
+    public double getRecall() {
+        return recall;
     }
 
-    public void setAccuracy(double accuracy) {
-        this.accuracy = accuracy;
+    public void setRecall(double recall) {
+        this.recall = recall;
     }
 
-    public ReportMetrics getMacroAvg() {
-        return macroAvg;
+    public double getF1Score() {
+        return f1Score;
     }
 
-    public void setMacroAvg(ReportMetrics macroAvg) {
-        this.macroAvg = macroAvg;
-    }
-
-    public ReportMetrics getWeightedAvg() {
-        return weightedAvg;
-    }
-
-    public void setWeightedAvg(ReportMetrics weightedAvg) {
-        this.weightedAvg = weightedAvg;
+    public void setF1Score(double f1Score) {
+        this.f1Score = f1Score;
     }
 }
