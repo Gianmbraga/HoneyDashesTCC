@@ -1,6 +1,7 @@
 package com.tcc.ml_backend.controller;
 
 import com.tcc.ml_backend.service.ModeloDeDadosService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,11 +56,12 @@ public class ModeloDeDadosController {
     }
 
     /**
-     * Endpoint para obter a distribuição de ataques por tipo.
+     * Endpoint para obter a acuracia.
      */
-    @GetMapping("/metrics/attacks/distribution")
-    public Map<String, Double> getAttackDistribution(@RequestParam String modelo) {
-        return service.getAttackDistribution(modelo);
+    @GetMapping("/metrics/accuracy")
+    public ResponseEntity<Double> getAccuracy(@RequestParam String modelo) {
+        Double accuracy = service.getModelAccuracy(modelo);
+        return ResponseEntity.ok(accuracy);
     }
 
     /**

@@ -46,12 +46,13 @@ public class ModeloDeDadosService {
     public int getTotalNonAttacks(String modelo) {
         return repository.sumAllNonAttacks(modelo);
     }
-
-    /**
-     * Calcula a distribuição de ataques por tipo para um modelo específico.
-     */
-    public Map<String, Double> getAttackDistribution(String modelo) {
-        return repository.attackDistributionByModel(modelo);
+    //acuracia
+    public Double getModelAccuracy(String modelo) {
+        Double accuracy = repository.getAccuracyByModel(modelo);
+        if (accuracy == null) {
+            throw new IllegalArgumentException("Modelo não encontrado ou acurácia indisponível: " + modelo);
+        }
+        return accuracy;
     }
 
     /**
