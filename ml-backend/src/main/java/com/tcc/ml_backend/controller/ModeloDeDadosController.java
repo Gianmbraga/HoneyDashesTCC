@@ -27,4 +27,48 @@ public class ModeloDeDadosController {
     public Map getMetrics(@RequestParam String modelo, @RequestParam String tipoAtaque) {
         return service.getMetricsByModelAndAttack(modelo, tipoAtaque);
     }
+
+    @GetMapping("/metrics/pca")
+    public Map getPCAMetrics(@RequestParam String modelo, @RequestParam String tipoAtaque) {
+        return service.getMetricsByModelAndPCA(modelo, tipoAtaque);
+    }
+
+    @GetMapping("/metrics/binary")
+    public Map getBinaryMetrics(@RequestParam String modelo, @RequestParam int valor) {
+        return service.getBinaryMetricsByModelAndValue(modelo, valor);
+    }
+
+    /**
+     * Endpoint para obter o total de ataques.
+     */
+    @GetMapping("/metrics/attacks/total")
+    public int getTotalAttacks(@RequestParam String modelo) {
+        return service.getTotalAttacks(modelo);
+    }
+
+    /**
+     * Endpoint para obter o total de não ataques.
+     */
+    @GetMapping("/metrics/nonattacks/total")
+    public int getTotalNonAttacks(@RequestParam String modelo) {
+        return service.getTotalNonAttacks(modelo);
+    }
+
+    /**
+     * Endpoint para obter a distribuição de ataques por tipo.
+     */
+    @GetMapping("/metrics/attacks/distribution")
+    public Map<String, Double> getAttackDistribution(@RequestParam String modelo) {
+        return service.getAttackDistribution(modelo);
+    }
+
+    /**
+     * Endpoint para obter a precisão média do modelo.
+     */
+    @GetMapping("/metrics/precision/average")
+    public double getAveragePrecision(@RequestParam String modelo) {
+        return service.getAveragePrecision(modelo);
+    }
+
+
 }

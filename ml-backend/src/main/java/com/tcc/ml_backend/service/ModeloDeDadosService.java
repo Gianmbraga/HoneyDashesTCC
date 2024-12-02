@@ -29,4 +29,36 @@ public class ModeloDeDadosService {
         return repository.findMetricsByModelAndPCA(modelo, tipoAtaque);
     }
 
+    public Map getBinaryMetricsByModelAndValue(String modelo, int valor) {
+        return repository.findMetricsByBinaryModelAndValue(modelo, valor);
+    }
+
+    /**
+     * Soma o total de ataques para um modelo específico.
+     */
+    public int getTotalAttacks(String modelo) {
+        return repository.sumAllAttacks(modelo);
+    }
+
+    /**
+     * Soma o total de não ataques para um modelo específico.
+     */
+    public int getTotalNonAttacks(String modelo) {
+        return repository.sumAllNonAttacks(modelo);
+    }
+
+    /**
+     * Calcula a distribuição de ataques por tipo para um modelo específico.
+     */
+    public Map<String, Double> getAttackDistribution(String modelo) {
+        return repository.attackDistributionByModel(modelo);
+    }
+
+    /**
+     * Calcula a precisão média para um modelo específico.
+     */
+    public double getAveragePrecision(String modelo) {
+        return repository.averagePrecisionByModel(modelo);
+    }
+
 }
