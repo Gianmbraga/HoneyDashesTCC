@@ -339,20 +339,23 @@ const DashboardGNB = () => {
                 }
             },
             legend: {
-                enabled: false // Aqui desativa completamente a legenda
+                enabled: false
             },
             credits: {
                 enabled: false
             },
             series: [{
                 name: 'Valor',
-                data: data
+                data: data.map((value, index) => ({
+                    y: value,
+                    color:  '#fdb700'
+                }))
             }]
         };
-
-
-        setChartOptionsAtaquesPrincipais(JSON.parse(JSON.stringify(optionsTopOportunidades)))
+    
+        setChartOptionsAtaquesPrincipais(JSON.parse(JSON.stringify(optionsTopOportunidades)));
     }
+    
 
     const mountGraphBarBinario = (labels, data) => {
         var optionsTopOportunidades = {
@@ -407,7 +410,8 @@ const DashboardGNB = () => {
             },
             series: [{
                 name: 'Valor',
-                data: data
+                data: data,
+                color: "#fdb700"
             }]
         };
 
@@ -515,7 +519,8 @@ const DashboardGNB = () => {
             series: [{
                 name: 'Acurácia "Normal"',
                 type: 'column',
-                data: data,        
+                data: data,
+                color: "#fdb700"      
             }, {
                 name: 'Valor Max',
                 type: 'spline',

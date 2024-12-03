@@ -34,10 +34,10 @@ const DefaultTitle = ({ title, subtitle, description, attacksActive, responseTim
                 <div className="divider" style={{ height: '30px', width: '1px', backgroundColor: '#FFFFFF', marginRight: '10px' }}></div>
 
                 {/* Escudo */}
-                <FaShieldAlt size={30} color={titleColor} style={{ marginRight: '10px' }} />
+                <FaShieldAlt size={30} color={'#fdb700'} style={{ marginRight: '10px' }} />
                 
                 {/* Título e subtítulo */}
-                <span id="dashboard-content-title-title" style={{ color: titleColor }}>
+                <span id="dashboard-content-title-title" style={{ color: '#fdb700' }}>
                     {title ?? 'Dashboard de Segurança'}
                     <span id="dashboard-content-title-subtitle">{subtitle ?? ''}</span>
                 </span>

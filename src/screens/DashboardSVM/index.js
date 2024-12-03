@@ -13,7 +13,7 @@ import DefaultCard from "../../components/DefaultComponents/DefaultCard";
 import DefaultTitle from "../../components/DefaultComponents/DefaultTitle";
 
 import HighchartsReact from 'highcharts-react-official';
-import Highcharts from 'highcharts';
+import Highcharts, { color } from 'highcharts';
 import { dashboardMetricasAPI } from "../../services/DashBoardMetricasAPI";
 
 
@@ -339,20 +339,23 @@ const DashboardSVM = () => {
                 }
             },
             legend: {
-                enabled: false // Aqui desativa completamente a legenda
+                enabled: false
             },
             credits: {
                 enabled: false
             },
             series: [{
                 name: 'Valor',
-                data: data
+                data: data.map((value, index) => ({
+                    y: value,
+                    color:  '#fdb700'
+                }))
             }]
         };
-
-
-        setChartOptionsAtaquesPrincipais(JSON.parse(JSON.stringify(optionsTopOportunidades)))
+    
+        setChartOptionsAtaquesPrincipais(JSON.parse(JSON.stringify(optionsTopOportunidades)));
     }
+    
 
     const mountGraphBarBinario = (labels, data) => {
         var optionsTopOportunidades = {
@@ -407,7 +410,8 @@ const DashboardSVM = () => {
             },
             series: [{
                 name: 'Valor',
-                data: data
+                data: data,
+                color: "#fdb700"
             }]
         };
 
@@ -515,7 +519,8 @@ const DashboardSVM = () => {
             series: [{
                 name: 'Acurácia "Normal"',
                 type: 'column',
-                data: data,        
+                data: data,
+                color: "#fdb700"      
             }, {
                 name: 'Valor Max',
                 type: 'spline',
@@ -536,7 +541,7 @@ const DashboardSVM = () => {
                 <DefaultRow>
                     <DefaultDiv height={"100%"}>
 
-                        <DefaultCard>
+                        <DefaultCard >
                             <DefaultRow>
                                 
                                 <DefaultDiv width={"30%"}>
@@ -660,7 +665,7 @@ const DashboardSVM = () => {
                 </DefaultRow>
 
                 <DefaultDivider isFullLine />
-
+                                            
                 <DefaultDiv>
                     <DefaultCard>
                         <HighchartsReact highcharts={Highcharts} options={chartOptionsFooter} />
