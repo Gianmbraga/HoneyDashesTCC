@@ -16,6 +16,30 @@ export const dashboardMetricasAPI = {
         return response;
     },
 
+    getAccuracyNormal: async (algoritmo) => {
+
+        var response = await get(`/metrics/accuracyClass?modelo=${algoritmo}`);
+        return response;
+    },
+
+    getPrecisaoNormal: async (algoritmo) => {
+
+        var response = await get(`metrics/precision/weightedClass?modelo=${algoritmo}`);
+        return response;
+    },
+
+    getAccuracyBinario: async (algoritmo) => {
+
+        var response = await get(`/metrics/accuracy?modelo=${algoritmo}`);
+        return response;
+    },
+    
+    getPrecisaoBinario: async (algoritmo) => {
+
+        var response = await get(`/metrics/precision/weighted?modelo=${algoritmo}`);
+        return response;
+    },
+
 
     //PEGAR ACURACIA
     getAccuracy: async (algoritmo) => {

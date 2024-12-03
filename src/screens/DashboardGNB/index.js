@@ -37,6 +37,12 @@ const DashboardGNB = () => {
     const [valueGraphNormal, setValueGraphNormal] = useState([])
 
 
+    const [labelAccuracyNormal, setLabelAccuracyNormal] = useState("")
+    const [labelPrecisionNormal, setLabelPrecisionNormal] = useState("")
+
+    const [labelAccuracyBinario, setLabelAccuracyBinario] = useState("")
+    const [labelPrecisionBinario, setLabelPrecisionBinario] = useState("")
+
     const [valorBinario0, setValorBinario0] = useState("")
     const [valorRecallBinario0, setValorRecallBinario0] = useState("")
     const [f1ScoreBinario0, setF1ScoreBinario0] = useState("")
@@ -65,7 +71,12 @@ const DashboardGNB = () => {
         getTopFeaturesNormal()
         getTopFeaturesBinario();
 
-        
+
+        getAccuracyNormal();
+        getPrecisaoNormal();
+
+        getAccuracyBinario();
+        getPrecisaoBinario();
         //MONTAR GRAFIOS
         mountGraphPieFactors([
             {
@@ -121,7 +132,7 @@ const DashboardGNB = () => {
 
         setIsLoading(true);
 
-        var response = await dashboardMetricasAPI.getAllAttacks('SVM');
+        var response = await dashboardMetricasAPI.getAllAttacks('GNB');
 
         if(response.success && response.data){
             setTotalAtaques(response.data);
@@ -135,10 +146,67 @@ const DashboardGNB = () => {
 
         setIsLoading(true);
 
-        var response = await dashboardMetricasAPI.getAllNotAttacks('SVM');
+        var response = await dashboardMetricasAPI.getAllNotAttacks('GNB');
 
         if(response.success && response.data){
             setTotalNaoAtaques(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getAccuracyNormal = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getAccuracyNormal('GNB');
+
+        if(response.success && response.data){
+            setLabelAccuracyNormal(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getPrecisaoNormal = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getPrecisaoNormal('GNB');
+
+        if(response.success && response.data){
+            setLabelPrecisionNormal(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+    
+    const getAccuracyBinario = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getAccuracyBinario('GNB');
+
+        if(response.success && response.data){
+            setLabelAccuracyBinario(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getPrecisaoBinario = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getPrecisaoBinario('GNB');
+        console.log("testeMetrica: ", response)
+
+        if(response.success && response.data){
+            setLabelPrecisionBinario(response.data);
         }
 
         setIsLoading(false);
@@ -149,7 +217,7 @@ const DashboardGNB = () => {
 
         setIsLoading(true);
 
-        var response = await dashboardMetricasAPI.getAccuracy('SVM');
+        var response = await dashboardMetricasAPI.getAccuracy('GNB');
 
         if(response.success && response.data){
             setAcuracia(response.data);
@@ -163,7 +231,7 @@ const DashboardGNB = () => {
 
         setIsLoading(true);
 
-        var response = await dashboardMetricasAPI.getPrecisionAverage('SVM');
+        var response = await dashboardMetricasAPI.getPrecisionAverage('GNB');
         if(response.success && response.data){
             setMediaPrecisao(response.data);
         }
@@ -176,11 +244,11 @@ const DashboardGNB = () => {
 
         setIsLoading(true);
 
-        var response = await dashboardMetricasAPI.getBinaryMetrics('SVM', 0);
+        var response = await dashboardMetricasAPI.getBinaryMetrics('GNB', 0);
         if(response.success && response.data){
-            setValorBinario0(response.data.binary.SVM.normal.class_report[0].precision);
-            setValorRecallBinario0(response.data.binary.SVM.normal.class_report[0].recall)
-            setF1ScoreBinario0(response.data.binary.SVM.normal.class_report[0]["f1-score"]);
+            setValorBinario0(response.data.binary.GNB.normal.class_report[0].precision);
+            setValorRecallBinario0(response.data.binary.GNB.normal.class_report[0].recall)
+            setF1ScoreBinario0(response.data.binary.GNB.normal.class_report[0]["f1-score"]);
         }
 
         setIsLoading(false);
@@ -191,12 +259,12 @@ const DashboardGNB = () => {
 
         setIsLoading(true);
 
-        var response = await dashboardMetricasAPI.getBinaryMetrics('SVM', 1);
+        var response = await dashboardMetricasAPI.getBinaryMetrics('GNB', 1);
 
         if(response.success && response.data){
-            setValorBinario1(response.data.binary.SVM.normal.class_report[1].precision);
-            setValorRecallBinario1(response.data.binary.SVM.normal.class_report[1].recall)
-            setF1ScoreBinario1(response.data.binary.SVM.normal.class_report[1]["f1-score"]);
+            setValorBinario1(response.data.binary.GNB.normal.class_report[1].precision);
+            setValorRecallBinario1(response.data.binary.GNB.normal.class_report[1].recall)
+            setF1ScoreBinario1(response.data.binary.GNB.normal.class_report[1]["f1-score"]);
         }
 
         setIsLoading(false);
@@ -207,13 +275,13 @@ const DashboardGNB = () => {
         setIsLoading(true);
     
         try {
-            const response = await dashboardMetricasAPI.getMetricaEspecificas('SVM', "Normal");
-            const responsePca = await dashboardMetricasAPI.getPcaMetrics('SVM', "Normal");
+            const response = await dashboardMetricasAPI.getMetricaEspecificas('GNB', "Normal");
+            const responsePca = await dashboardMetricasAPI.getPcaMetrics('GNB', "Normal");
     
             if (response.success && response.data && responsePca.success && responsePca.data) {
                 // Aguarde explicitamente para evitar inconsistências
-                const normalReport = response.data.class?.SVM?.normal?.class_report?.Normal;
-                const pcaReport = responsePca.data.class?.SVM?.pca?.class_report?.Normal;
+                const normalReport = response.data.class?.GNB?.normal?.class_report?.Normal;
+                const pcaReport = responsePca.data.class?.GNB?.pca?.class_report?.Normal;
     
                 if (normalReport && pcaReport) {
                     const normalPrecision = normalReport.precision;
@@ -237,10 +305,10 @@ const DashboardGNB = () => {
         setIsLoading(true);
     
         try {
-            const response = await dashboardMetricasAPI.getTopFeaturesNormal('SVM');
+            const response = await dashboardMetricasAPI.getTopFeaturesNormal('GNB');
     
             if (response.success && response.data) {
-                const topFeatures = response.data.class.SVM.normal.top_features;
+                const topFeatures = response.data.class.GNB.normal.top_features;
     
                 // Converte o objeto de `top_features` para uma lista, ordena e pega os top 10
                 const sortedFeatures = Object.entries(topFeatures)
@@ -265,11 +333,11 @@ const DashboardGNB = () => {
         setIsLoading(true);
     
         try {
-            const response = await dashboardMetricasAPI.getTopFeaturesBinario('SVM');
+            const response = await dashboardMetricasAPI.getTopFeaturesBinario('GNB');
             console.log("features: ", response);
     
             if (response.success && response.data) {
-                const topFeatures = response.data.binary.SVM.normal.top_features;
+                const topFeatures = response.data.binary.GNB.normal.top_features;
     
                 // Converte o objeto de `top_features` para uma lista, ordena e pega os top 10
                 const sortedFeatures = Object.entries(topFeatures)
@@ -534,7 +602,7 @@ const DashboardGNB = () => {
 
     return (
         <BlockUI blocked={isLoading} fullScreen template={<i className="pi pi-clock" style={{ fontSize: '3rem' }}></i>}>
-            <DefaultTitle title={"SVM"}  subtitle={"Aqui você encontra os ataque realizados"} description={"aqui veremos os ataques"}/>
+            <DefaultTitle title={"GNB"}  subtitle={"Aqui você encontra os ataque realizados"} description={"aqui veremos os ataques"}/>
 
 
             <DefaultDiv padding={"0 15px"}>
@@ -565,12 +633,12 @@ const DashboardGNB = () => {
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#3498DB', marginRight: '3px' }}></i>
-                                            <DefaultLabel title={"Acurácia: " + acuracia} fontSize={"16px"} />
+                                            <DefaultLabel title={"Acurácia: " + labelAccuracyNormal} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#F1C40F' }}></i>
-                                            <DefaultLabel title={"Media de Precisão:" + mediaPrecisao} fontSize={"16px"} />
+                                            <DefaultLabel title={"Media de Precisão:" + labelPrecisionNormal} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         
@@ -634,12 +702,12 @@ const DashboardGNB = () => {
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
-                                            <DefaultLabel title={"Precisão valor binário 0:" + valorBinario0} fontSize={"16px"} />
+                                            <DefaultLabel title={"Acurácia: " + labelPrecisionBinario} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
-                                            <DefaultLabel title={"Precisão valor binário 1:" + valorBinario1} fontSize={"16px"} />
+                                            <DefaultLabel title={"Media de Precisão:" + labelAccuracyBinario} fontSize={"16px"} />
                                         </DefaultRow>
                                     </DefaultColumn>
 

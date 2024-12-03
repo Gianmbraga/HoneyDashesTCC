@@ -37,6 +37,12 @@ const DashboardMetricas = () => {
     const [valueGraphNormal, setValueGraphNormal] = useState([])
 
 
+    const [labelAccuracyNormal, setLabelAccuracyNormal] = useState("")
+    const [labelPrecisionNormal, setLabelPrecisionNormal] = useState("")
+
+    const [labelAccuracyBinario, setLabelAccuracyBinario] = useState("")
+    const [labelPrecisionBinario, setLabelPrecisionBinario] = useState("")
+
     const [valorBinario0, setValorBinario0] = useState("")
     const [valorRecallBinario0, setValorRecallBinario0] = useState("")
     const [f1ScoreBinario0, setF1ScoreBinario0] = useState("")
@@ -65,7 +71,12 @@ const DashboardMetricas = () => {
         getTopFeaturesNormal()
         getTopFeaturesBinario();
 
-        
+
+        getAccuracyNormal();
+        getPrecisaoNormal();
+
+        getAccuracyBinario();
+        getPrecisaoBinario();
         //MONTAR GRAFIOS
         mountGraphPieFactors([
             {
@@ -139,6 +150,63 @@ const DashboardMetricas = () => {
 
         if(response.success && response.data){
             setTotalNaoAtaques(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getAccuracyNormal = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getAccuracyNormal('RandomForest');
+
+        if(response.success && response.data){
+            setLabelAccuracyNormal(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getPrecisaoNormal = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getPrecisaoNormal('RandomForest');
+
+        if(response.success && response.data){
+            setLabelPrecisionNormal(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+    
+    const getAccuracyBinario = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getAccuracyBinario('RandomForest');
+
+        if(response.success && response.data){
+            setLabelAccuracyBinario(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getPrecisaoBinario = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getPrecisaoBinario('RandomForest');
+        console.log("testeMetrica: ", response)
+
+        if(response.success && response.data){
+            setLabelPrecisionBinario(response.data);
         }
 
         setIsLoading(false);
@@ -565,12 +633,12 @@ const DashboardMetricas = () => {
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#3498DB', marginRight: '3px' }}></i>
-                                            <DefaultLabel title={"Acurácia: " + acuracia} fontSize={"16px"} />
+                                            <DefaultLabel title={"Acurácia: " + labelAccuracyNormal} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#F1C40F' }}></i>
-                                            <DefaultLabel title={"Media de Precisão:" + mediaPrecisao} fontSize={"16px"} />
+                                            <DefaultLabel title={"Media de Precisão:" + labelPrecisionNormal} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         
@@ -634,12 +702,12 @@ const DashboardMetricas = () => {
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
-                                            <DefaultLabel title={"Precisão valor binário 0:" + valorBinario0} fontSize={"16px"} />
+                                            <DefaultLabel title={"Acurácia: " + labelPrecisionBinario} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
-                                            <DefaultLabel title={"Precisão valor binário 1:" + valorBinario1} fontSize={"16px"} />
+                                            <DefaultLabel title={"Media de Precisão:" + labelAccuracyBinario} fontSize={"16px"} />
                                         </DefaultRow>
                                     </DefaultColumn>
 

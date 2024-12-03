@@ -13,7 +13,7 @@ import DefaultCard from "../../components/DefaultComponents/DefaultCard";
 import DefaultTitle from "../../components/DefaultComponents/DefaultTitle";
 
 import HighchartsReact from 'highcharts-react-official';
-import Highcharts, { color } from 'highcharts';
+import Highcharts from 'highcharts';
 import { dashboardMetricasAPI } from "../../services/DashBoardMetricasAPI";
 
 
@@ -36,6 +36,12 @@ const DashboardSVM = () => {
     const [labelGraphNormal, setLabelGraphNormal] = useState([])
     const [valueGraphNormal, setValueGraphNormal] = useState([])
 
+
+    const [labelAccuracyNormal, setLabelAccuracyNormal] = useState("")
+    const [labelPrecisionNormal, setLabelPrecisionNormal] = useState("")
+
+    const [labelAccuracyBinario, setLabelAccuracyBinario] = useState("")
+    const [labelPrecisionBinario, setLabelPrecisionBinario] = useState("")
 
     const [valorBinario0, setValorBinario0] = useState("")
     const [valorRecallBinario0, setValorRecallBinario0] = useState("")
@@ -65,7 +71,12 @@ const DashboardSVM = () => {
         getTopFeaturesNormal()
         getTopFeaturesBinario();
 
-        
+
+        getAccuracyNormal();
+        getPrecisaoNormal();
+
+        getAccuracyBinario();
+        getPrecisaoBinario();
         //MONTAR GRAFIOS
         mountGraphPieFactors([
             {
@@ -139,6 +150,63 @@ const DashboardSVM = () => {
 
         if(response.success && response.data){
             setTotalNaoAtaques(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getAccuracyNormal = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getAccuracyNormal('SVM');
+
+        if(response.success && response.data){
+            setLabelAccuracyNormal(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getPrecisaoNormal = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getPrecisaoNormal('SVM');
+
+        if(response.success && response.data){
+            setLabelPrecisionNormal(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+    
+    const getAccuracyBinario = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getAccuracyBinario('SVM');
+
+        if(response.success && response.data){
+            setLabelAccuracyBinario(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getPrecisaoBinario = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getPrecisaoBinario('SVM');
+        console.log("testeMetrica: ", response)
+
+        if(response.success && response.data){
+            setLabelPrecisionBinario(response.data);
         }
 
         setIsLoading(false);
@@ -541,7 +609,7 @@ const DashboardSVM = () => {
                 <DefaultRow>
                     <DefaultDiv height={"100%"}>
 
-                        <DefaultCard >
+                        <DefaultCard>
                             <DefaultRow>
                                 
                                 <DefaultDiv width={"30%"}>
@@ -565,12 +633,12 @@ const DashboardSVM = () => {
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#3498DB', marginRight: '3px' }}></i>
-                                            <DefaultLabel title={"Acurácia: " + acuracia} fontSize={"16px"} />
+                                            <DefaultLabel title={"Acurácia: " + labelAccuracyNormal} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#F1C40F' }}></i>
-                                            <DefaultLabel title={"Media de Precisão:" + mediaPrecisao} fontSize={"16px"} />
+                                            <DefaultLabel title={"Media de Precisão:" + labelPrecisionNormal} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         
@@ -634,12 +702,12 @@ const DashboardSVM = () => {
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
-                                            <DefaultLabel title={"Precisão valor binário 0:" + valorBinario0} fontSize={"16px"} />
+                                            <DefaultLabel title={"Acurácia: " + labelPrecisionBinario} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         <DefaultRow>
                                             <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
-                                            <DefaultLabel title={"Precisão valor binário 1:" + valorBinario1} fontSize={"16px"} />
+                                            <DefaultLabel title={"Media de Precisão:" + labelAccuracyBinario} fontSize={"16px"} />
                                         </DefaultRow>
                                     </DefaultColumn>
 
@@ -665,7 +733,7 @@ const DashboardSVM = () => {
                 </DefaultRow>
 
                 <DefaultDivider isFullLine />
-                                            
+
                 <DefaultDiv>
                     <DefaultCard>
                         <HighchartsReact highcharts={Highcharts} options={chartOptionsFooter} />
