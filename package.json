@@ -1,6 +1,7 @@
 {
   "name": "tcc-front",
   "version": "0.1.0",
+  "homepage": "http://www.honeydashes.com",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
