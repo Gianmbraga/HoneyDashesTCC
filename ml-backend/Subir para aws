@@ -1,0 +1,9 @@
+zip deployment-package.zip build/libs/ml-backend-0.0.1-SNAPSHOT.jar Dockerfile
+aws s3 cp deployment-package.zip s3://elasticbeanstalk-us-east-1-545009865241/
+aws elasticbeanstalk update-environment \
+    --environment-name Ml-backend-env \
+    --version-label v1.1.0
+verificar ambiente:
+
+aws elasticbeanstalk describe-environments \
+    --application-name ml-backend

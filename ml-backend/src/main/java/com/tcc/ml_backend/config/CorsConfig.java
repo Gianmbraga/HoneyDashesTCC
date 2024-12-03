@@ -15,9 +15,10 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.setAllowCredentials(true); // Permitir credenciais
-        config.addAllowedOriginPattern("*"); // Permitir todas as origens com padrões
+        config.addAllowedOriginPattern("*"); // Permitir todas as origens
         config.addAllowedHeader("*"); // Permitir todos os cabeçalhos
-        config.addAllowedMethod("*"); // Permitir todos os métodos (GET, POST, etc.)
+        config.addAllowedMethod("*"); // Permitir todos os métodos (GET, POST, PUT, DELETE, OPTIONS)
+        config.setMaxAge(3600L); // Cache das permissões por 1 hora
 
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
