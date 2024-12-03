@@ -32,6 +32,14 @@ public class ModeloDeDadosService {
     public Map getBinaryMetricsByModelAndValue(String modelo, int valor) {
         return repository.findMetricsByBinaryModelAndValue(modelo, valor);
     }
+    public Map getTopFeaturesByModel(String modelo) {
+        return repository.findTopFeaturesByModel(modelo);
+    }
+
+    public Map getBinaryTopFeaturesByModel(String modelo) {
+        return repository.findBinaryTopFeaturesByModel(modelo);
+    }
+
 
     /**
      * Soma o total de ataques para um modelo específico.

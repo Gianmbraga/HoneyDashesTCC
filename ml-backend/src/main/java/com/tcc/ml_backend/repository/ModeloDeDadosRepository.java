@@ -45,6 +45,19 @@ public class ModeloDeDadosRepository {
         return mongoTemplate.findOne(query, Map.class, "statistics");
     }
 
+    public Map findTopFeaturesByModel(String modelo) {
+        Query query = new Query();
+        query.fields().include("class." + modelo + ".normal.top_features");
+        return mongoTemplate.findOne(query, Map.class, "statistics");
+    }
+
+    public Map findBinaryTopFeaturesByModel(String modelo) {
+        Query query = new Query();
+        query.fields().include("binary." + modelo + ".normal.top_features");
+        return mongoTemplate.findOne(query, Map.class, "statistics");
+    }
+
+
     public int sumAllAttacks(String modelo) {
         Query query = new Query();
         query.fields().include("binary." + modelo + ".normal.class_report.1.support");

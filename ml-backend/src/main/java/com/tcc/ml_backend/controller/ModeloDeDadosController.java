@@ -39,6 +39,17 @@ public class ModeloDeDadosController {
         return service.getBinaryMetricsByModelAndValue(modelo, valor);
     }
 
+    @GetMapping("/metrics/top-features")
+    public Map getTopFeatures(@RequestParam String modelo) {
+        return service.getTopFeaturesByModel(modelo);
+    }
+
+    @GetMapping("/metrics/binary/top-features")
+    public Map getBinaryTopFeatures(@RequestParam String modelo) {
+        return service.getBinaryTopFeaturesByModel(modelo);
+    }
+
+
     /**
      * Endpoint para obter o total de ataques.
      */
