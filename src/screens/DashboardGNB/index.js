@@ -20,41 +20,53 @@ import { dashboardMetricasAPI } from "../../services/DashBoardMetricasAPI";
 
 const DashboardGNB = () => {
 
-    // useEffect(async () => {
-
-    // }, [])
     const [isLoading, setIsLoading] = useState(undefined)
     const [chartOptionsAtaquesPrincipais, setChartOptionsAtaquesPrincipais] = useState(null);
+    const [chartOptionsAtaquesBinario, setChartOptionsAtaquesBinario] = useState(null);
     const [chartOptionsInfluenciadores, setChartOptionsInfluenciadores] = useState(null);
     const [chartOptionsFooter, setChartOptionsFooter] = useState(null);
+
+    //variables for graphs
+
+    const [totalAtaques, setTotalAtaques] = useState("")
+    const [totalNaoAtaques, setTotalNaoAtaques] = useState("")
+    const [acuracia, setAcuracia] = useState("")
+    const [mediaPrecisao, setMediaPrecisao] = useState("")
+
+    const [labelGraphNormal, setLabelGraphNormal] = useState([])
+    const [valueGraphNormal, setValueGraphNormal] = useState([])
+
+
+    const [valorBinario0, setValorBinario0] = useState("")
+    const [valorRecallBinario0, setValorRecallBinario0] = useState("")
+    const [f1ScoreBinario0, setF1ScoreBinario0] = useState("")
+
+
+    const [valorBinario1, setValorBinario1] = useState("")
+    const [valorRecallBinario1, setValorRecallBinario1] = useState("")
+    const [f1ScoreBinario1, setF1ScoreBinario1] = useState("")
+    
+    const [distribuicao, setDistribuicao] = useState([])
+    const [precisaoValue, setPrecisaoValue] = useState("")
 
     useEffect(() => {
         setIsLoading(true);
 
         getMetricas();
+        getMetricasNaoAtaques();
+        getAccuracy();
+        getPrecisionAverage();
+        getBinaryType0();
+        getBinaryType1();
 
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 1500); // Defina o tempo desejado, aqui está 5 segundos para o teste.
+        getMetricaEspecificas();
+        
+
+        getTopFeaturesNormal()
+        getTopFeaturesBinario();
+
         
         //MONTAR GRAFIOS
-        mountGraphBarAtaques([
-            "DDoS",
-            "Phishing",
-            "Malware",
-            "Ransomware",
-            "Brute Force",
-            "SQL Injection",
-            "Cross-Site Scripting (XSS)",
-            "Zero-Day Exploit",
-            "Man-in-the-Middle (MitM)",
-            "Credential Stuffing"
-          ],
-          [
-            1200, 800, 600, 350, 200, 150, 130, 100, 90, 60
-          ]
-        )
-
         mountGraphPieFactors([
             {
                 name: 'Endereço IP',
@@ -101,12 +113,7 @@ const DashboardGNB = () => {
         ]
         )
 
-        mountGraphFooter([
-            27.6, 28.8, 21.7, 34.1, 29.0, 28.4, 45.6, 51.7, 39.0,
-            60.0, 28.6, 32.1
-        ])
-
-        return () => clearTimeout(timer); // Limpa o timeout quando o componente desmontar, para evitar problemas.
+        
     }, [])
 
 
@@ -114,16 +121,177 @@ const DashboardGNB = () => {
 
         setIsLoading(true);
 
-        var response = await dashboardMetricasAPI.getAllAttacks('KNN');
+        var response = await dashboardMetricasAPI.getAllAttacks('SVM');
 
-        console.log("resp aqui: ", response)
-            // if(response.success && response.data){
-            //     setGruposAcesso(response.data);
-            // }
+        if(response.success && response.data){
+            setTotalAtaques(response.data);
+        }
 
         setIsLoading(false);
 
     }
+
+    const getMetricasNaoAtaques = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getAllNotAttacks('SVM');
+
+        if(response.success && response.data){
+            setTotalNaoAtaques(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getAccuracy = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getAccuracy('SVM');
+
+        if(response.success && response.data){
+            setAcuracia(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getPrecisionAverage = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getPrecisionAverage('SVM');
+        if(response.success && response.data){
+            setMediaPrecisao(response.data);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getBinaryType0 = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getBinaryMetrics('SVM', 0);
+        if(response.success && response.data){
+            setValorBinario0(response.data.binary.SVM.normal.class_report[0].precision);
+            setValorRecallBinario0(response.data.binary.SVM.normal.class_report[0].recall)
+            setF1ScoreBinario0(response.data.binary.SVM.normal.class_report[0]["f1-score"]);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getBinaryType1 = async() => {
+
+        setIsLoading(true);
+
+        var response = await dashboardMetricasAPI.getBinaryMetrics('SVM', 1);
+
+        if(response.success && response.data){
+            setValorBinario1(response.data.binary.SVM.normal.class_report[1].precision);
+            setValorRecallBinario1(response.data.binary.SVM.normal.class_report[1].recall)
+            setF1ScoreBinario1(response.data.binary.SVM.normal.class_report[1]["f1-score"]);
+        }
+
+        setIsLoading(false);
+
+    }
+
+    const getMetricaEspecificas = async () => {
+        setIsLoading(true);
+    
+        try {
+            const response = await dashboardMetricasAPI.getMetricaEspecificas('SVM', "Normal");
+            const responsePca = await dashboardMetricasAPI.getPcaMetrics('SVM', "Normal");
+    
+            if (response.success && response.data && responsePca.success && responsePca.data) {
+                // Aguarde explicitamente para evitar inconsistências
+                const normalReport = response.data.class?.SVM?.normal?.class_report?.Normal;
+                const pcaReport = responsePca.data.class?.SVM?.pca?.class_report?.Normal;
+    
+                if (normalReport && pcaReport) {
+                    const normalPrecision = normalReport.precision;
+                    const pcaPrecision = pcaReport.precision;
+    
+                    mountGraphFooter([normalPrecision, pcaPrecision]);
+                } else {
+                    console.error("Relatórios Normal ou PCA ausentes");
+                }
+            } else {
+                console.error("Respostas malformadas ou ausentes");
+            }
+        } catch (error) {
+            console.error("Erro ao obter métricas:", error);
+        }
+    
+        setIsLoading(false);
+    };
+    
+    const getTopFeaturesNormal = async () => {
+        setIsLoading(true);
+    
+        try {
+            const response = await dashboardMetricasAPI.getTopFeaturesNormal('SVM');
+    
+            if (response.success && response.data) {
+                const topFeatures = response.data.class.SVM.normal.top_features;
+    
+                // Converte o objeto de `top_features` para uma lista, ordena e pega os top 10
+                const sortedFeatures = Object.entries(topFeatures)
+                    .sort(([, valueA], [, valueB]) => valueB - valueA) // Ordena por valor decrescente
+                    .slice(0, 10); // Seleciona os 10 primeiros
+    
+                // Cria as listas de labels e valores
+                const labels = sortedFeatures.map(([key]) => key);
+                const values = sortedFeatures.map(([, value]) => value);
+    
+                // Monta o gráfico com as listas criadas
+                mountGraphBarAtaques(labels, values);
+            }
+        } catch (error) {
+            console.error("Erro ao obter top features:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const getTopFeaturesBinario = async () => {
+        setIsLoading(true);
+    
+        try {
+            const response = await dashboardMetricasAPI.getTopFeaturesBinario('SVM');
+            console.log("features: ", response);
+    
+            if (response.success && response.data) {
+                const topFeatures = response.data.binary.SVM.normal.top_features;
+    
+                // Converte o objeto de `top_features` para uma lista, ordena e pega os top 10
+                const sortedFeatures = Object.entries(topFeatures)
+                    .sort(([, valueA], [, valueB]) => valueB - valueA) // Ordena por valor decrescente
+                    .slice(0, 10); // Seleciona os 10 primeiros
+    
+                // Cria as listas de labels e valores
+                const labels = sortedFeatures.map(([key]) => key);
+                const values = sortedFeatures.map(([, value]) => value);
+    
+                // Monta o gráfico com as listas criadas
+                mountGraphBarBinario(labels, values);
+            }
+        } catch (error) {
+            console.error("Erro ao obter top features:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+    
+
 
     const mountGraphBarAtaques = (labels, data) => {
         var optionsTopOportunidades = {
@@ -132,11 +300,11 @@ const DashboardGNB = () => {
                 height: 350,
             },
             title: {
-                text: 'Ataques',
+                text: 'Top Features',
                 align: 'center'
             },
             subtitle: {
-                text: 'TOP 10 Ataques',
+                text: 'TOP 10 Features',
                 align: 'center'
             },
             xAxis: {
@@ -150,7 +318,7 @@ const DashboardGNB = () => {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Total em valor',
+                    text: 'Maior influência',
                     align: 'high'
                 },
                 labels: {
@@ -184,6 +352,67 @@ const DashboardGNB = () => {
 
 
         setChartOptionsAtaquesPrincipais(JSON.parse(JSON.stringify(optionsTopOportunidades)))
+    }
+
+    const mountGraphBarBinario = (labels, data) => {
+        var optionsTopOportunidades = {
+            chart: {
+                type: 'bar',
+                height: 350,
+            },
+            title: {
+                text: 'Top Features',
+                align: 'center'
+            },
+            subtitle: {
+                text: 'TOP 10 Features',
+                align: 'center'
+            },
+            xAxis: {
+                categories: labels,
+                title: {
+                    text: null
+                },
+                gridLineWidth: 1,
+                lineWidth: 0
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Maior influência',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                },
+                gridLineWidth: 0
+            },
+            tooltip: {
+                valueSuffix: ''
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: '50%',
+                    dataLabels: {
+                        enabled: true
+                    },
+                    groupPadding: 0.1
+                }
+            },
+            legend: {
+                enabled: false // Aqui desativa completamente a legenda
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Valor',
+                data: data
+            }]
+        };
+
+
+        setChartOptionsAtaquesBinario(JSON.parse(JSON.stringify(optionsTopOportunidades)))
     }
 
     const mountGraphPieFactors = (data) => {
@@ -244,13 +473,12 @@ const DashboardGNB = () => {
                 height: 150,
             },
             title: {
-                text: 'Picos de ataque',
+                text: 'Uso de PCA',
                 align: 'left'
             },
             xAxis: [{
                 categories: [
-                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                    'Sem PCA', 'com PCA'
                 ],
                 crosshair: true
             }],
@@ -285,11 +513,11 @@ const DashboardGNB = () => {
                 enabled: false
             },
             series: [{
-                name: 'Quantidade',
+                name: 'Acurácia "Normal"',
                 type: 'column',
                 data: data,        
             }, {
-                name: 'Picos',
+                name: 'Valor Max',
                 type: 'spline',
                 data: data,
             }]
@@ -301,7 +529,7 @@ const DashboardGNB = () => {
 
     return (
         <BlockUI blocked={isLoading} fullScreen template={<i className="pi pi-clock" style={{ fontSize: '3rem' }}></i>}>
-            <DefaultTitle title={"Naive Bayes"}  subtitle={"Aqui você encontra os ataque realizados"} description={"aqui veremos os ataques"}/>
+            <DefaultTitle title={"SVM"}  subtitle={"Aqui você encontra os ataque realizados"} description={"aqui veremos os ataques"}/>
 
 
             <DefaultDiv padding={"0 15px"}>
@@ -322,28 +550,25 @@ const DashboardGNB = () => {
                                         {/* Informações importantes */}
                                         <DefaultRow>
                                             <i className="pi pi-bolt" style={{ fontSize: '24px', color: '#FF5733' }}></i>
-                                            <DefaultLabel title={"Total de ataques: 3,500"} fontSize={"16px"} fontWeight={"bold"} />
+                                            <DefaultLabel title={"Total de ataques:" + totalAtaques} fontSize={"16px"} fontWeight={"bold"} />
                                         </DefaultRow>
                                         
                                         <DefaultRow>
-                                            <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#3498DB' }}></i>
-                                            <DefaultLabel title={"Ataque mais comum: DDoS (1,200 vezes)"} fontSize={"16px"} />
+                                            <i className="pi pi-bolt" style={{ fontSize: '24px', color: '#FF5733' }}></i>
+                                            <DefaultLabel title={"Total de não ataques:" + totalNaoAtaques} fontSize={"16px"} fontWeight={"bold"} />
                                         </DefaultRow>
 
                                         <DefaultRow>
-                                            <i className="pi pi-globe" style={{ fontSize: '24px', color: '#2ECC71' }}></i>
-                                            <DefaultLabel title={"Região mais afetada: América do Norte"} fontSize={"16px"} />
+                                            <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#3498DB', marginRight: '3px' }}></i>
+                                            <DefaultLabel title={"Acurácia: " + acuracia} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         <DefaultRow>
-                                            <i className="pi pi-stopwatch" style={{ fontSize: '24px', color: '#F1C40F' }}></i>
-                                            <DefaultLabel title={"Tempo médio de resposta: 5 minutos"} fontSize={"16px"} />
+                                            <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#F1C40F' }}></i>
+                                            <DefaultLabel title={"Media de Precisão:" + mediaPrecisao} fontSize={"16px"} />
                                         </DefaultRow>
 
-                                        <DefaultRow>
-                                            <i className="pi pi-shield" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
-                                            <DefaultLabel title={"Ataques bloqueados: 85%"} fontSize={"16px"} />
-                                        </DefaultRow>
+                                        
                                     </DefaultColumn>
 
 
@@ -364,14 +589,11 @@ const DashboardGNB = () => {
 
                     </DefaultDiv>
                         
-                        <DefaultDivider orientation={"vertical"} title={""} />
-
-                    {/* <DefaultCard>
-                        <HighchartsReact highcharts={Highcharts} options={chartOptionsInfluenciadores} />
-                    </DefaultCard> */}
+                    <DefaultDivider orientation={"vertical"} title={""} />
 
 
-                        <DefaultDiv height={"100%"}>
+
+                    <DefaultDiv height={"100%"}>
 
                         <DefaultCard>
                             <DefaultRow>
@@ -387,27 +609,32 @@ const DashboardGNB = () => {
                                         {/* Informações importantes */}
                                         <DefaultRow>
                                             <i className="pi pi-bolt" style={{ fontSize: '24px', color: '#FF5733' }}></i>
-                                            <DefaultLabel title={"Total de ataques: 3,500"} fontSize={"16px"} fontWeight={"bold"} />
+                                            <DefaultLabel title={"Total de ataques:" + totalAtaques} fontSize={"16px"} fontWeight={"bold"} />
                                         </DefaultRow>
                                         
                                         <DefaultRow>
-                                            <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#3498DB' }}></i>
-                                            <DefaultLabel title={"Ataque mais comum: DDoS (1,200 vezes)"} fontSize={"16px"} />
+                                            <i className="pi pi-bolt" style={{ fontSize: '24px', color: '#FF5733' }}></i>
+                                            <DefaultLabel title={"Total de não ataques:" + totalNaoAtaques} fontSize={"16px"} fontWeight={"bold"} />
+                                        </DefaultRow>
+
+                                        {/* <DefaultRow>
+                                            <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#3498DB', marginRight: '3px' }}></i>
+                                            <DefaultLabel title={"Acurácia: " + acuracia} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         <DefaultRow>
-                                            <i className="pi pi-globe" style={{ fontSize: '24px', color: '#2ECC71' }}></i>
-                                            <DefaultLabel title={"Região mais afetada: América do Norte"} fontSize={"16px"} />
+                                            <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#F1C40F' }}></i>
+                                            <DefaultLabel title={"Media de Precisão:" + mediaPrecisao} fontSize={"16px"} />
+                                        </DefaultRow> */}
+
+                                        <DefaultRow>
+                                            <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
+                                            <DefaultLabel title={"Precisão valor binário 0:" + valorBinario0} fontSize={"16px"} />
                                         </DefaultRow>
 
                                         <DefaultRow>
-                                            <i className="pi pi-stopwatch" style={{ fontSize: '24px', color: '#F1C40F' }}></i>
-                                            <DefaultLabel title={"Tempo médio de resposta: 5 minutos"} fontSize={"16px"} />
-                                        </DefaultRow>
-
-                                        <DefaultRow>
-                                            <i className="pi pi-shield" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
-                                            <DefaultLabel title={"Ataques bloqueados: 85%"} fontSize={"16px"} />
+                                            <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
+                                            <DefaultLabel title={"Precisão valor binário 1:" + valorBinario1} fontSize={"16px"} />
                                         </DefaultRow>
                                     </DefaultColumn>
 
@@ -419,7 +646,7 @@ const DashboardGNB = () => {
                                 <DefaultDivider orientation={"vertical"} title={""} />
 
                                 <DefaultDiv width={"70%"}>
-                                    <HighchartsReact highcharts={Highcharts} options={chartOptionsAtaquesPrincipais} />
+                                    <HighchartsReact highcharts={Highcharts} options={chartOptionsAtaquesBinario} />
 
                                 </DefaultDiv>
                                 
@@ -428,6 +655,8 @@ const DashboardGNB = () => {
                         </DefaultCard>
 
                         </DefaultDiv>
+
+                    
                 </DefaultRow>
 
                 <DefaultDivider isFullLine />

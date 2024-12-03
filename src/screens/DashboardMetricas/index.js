@@ -22,6 +22,7 @@ const DashboardMetricas = () => {
 
     const [isLoading, setIsLoading] = useState(undefined)
     const [chartOptionsAtaquesPrincipais, setChartOptionsAtaquesPrincipais] = useState(null);
+    const [chartOptionsAtaquesBinario, setChartOptionsAtaquesBinario] = useState(null);
     const [chartOptionsInfluenciadores, setChartOptionsInfluenciadores] = useState(null);
     const [chartOptionsFooter, setChartOptionsFooter] = useState(null);
 
@@ -31,6 +32,9 @@ const DashboardMetricas = () => {
     const [totalNaoAtaques, setTotalNaoAtaques] = useState("")
     const [acuracia, setAcuracia] = useState("")
     const [mediaPrecisao, setMediaPrecisao] = useState("")
+
+    const [labelGraphNormal, setLabelGraphNormal] = useState([])
+    const [valueGraphNormal, setValueGraphNormal] = useState([])
 
 
     const [valorBinario0, setValorBinario0] = useState("")
@@ -57,24 +61,12 @@ const DashboardMetricas = () => {
 
         getMetricaEspecificas();
         
-        //MONTAR GRAFIOS
-        mountGraphBarAtaques([
-            "DDoS",
-            "Phishing",
-            "Malware",
-            "Ransomware",
-            "Brute Force",
-            "SQL Injection",
-            "Cross-Site Scripting (XSS)",
-            "Zero-Day Exploit",
-            "Man-in-the-Middle (MitM)",
-            "Credential Stuffing"
-          ],
-          [
-            1200, 800, 600, 350, 200, 150, 130, 100, 90, 60
-          ]
-        )
 
+        getTopFeaturesNormal()
+        getTopFeaturesBinario();
+
+        
+        //MONTAR GRAFIOS
         mountGraphPieFactors([
             {
                 name: 'Endereço IP',
@@ -241,6 +233,64 @@ const DashboardMetricas = () => {
         setIsLoading(false);
     };
     
+    const getTopFeaturesNormal = async () => {
+        setIsLoading(true);
+    
+        try {
+            const response = await dashboardMetricasAPI.getTopFeaturesNormal('RandomForest');
+    
+            if (response.success && response.data) {
+                const topFeatures = response.data.class.RandomForest.normal.top_features;
+    
+                // Converte o objeto de `top_features` para uma lista, ordena e pega os top 10
+                const sortedFeatures = Object.entries(topFeatures)
+                    .sort(([, valueA], [, valueB]) => valueB - valueA) // Ordena por valor decrescente
+                    .slice(0, 10); // Seleciona os 10 primeiros
+    
+                // Cria as listas de labels e valores
+                const labels = sortedFeatures.map(([key]) => key);
+                const values = sortedFeatures.map(([, value]) => value);
+    
+                // Monta o gráfico com as listas criadas
+                mountGraphBarAtaques(labels, values);
+            }
+        } catch (error) {
+            console.error("Erro ao obter top features:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const getTopFeaturesBinario = async () => {
+        setIsLoading(true);
+    
+        try {
+            const response = await dashboardMetricasAPI.getTopFeaturesBinario('RandomForest');
+            console.log("features: ", response);
+    
+            if (response.success && response.data) {
+                const topFeatures = response.data.binary.RandomForest.normal.top_features;
+    
+                // Converte o objeto de `top_features` para uma lista, ordena e pega os top 10
+                const sortedFeatures = Object.entries(topFeatures)
+                    .sort(([, valueA], [, valueB]) => valueB - valueA) // Ordena por valor decrescente
+                    .slice(0, 10); // Seleciona os 10 primeiros
+    
+                // Cria as listas de labels e valores
+                const labels = sortedFeatures.map(([key]) => key);
+                const values = sortedFeatures.map(([, value]) => value);
+    
+                // Monta o gráfico com as listas criadas
+                mountGraphBarBinario(labels, values);
+            }
+        } catch (error) {
+            console.error("Erro ao obter top features:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+    
 
 
     const mountGraphBarAtaques = (labels, data) => {
@@ -250,11 +300,11 @@ const DashboardMetricas = () => {
                 height: 350,
             },
             title: {
-                text: 'Ataques',
+                text: 'Top Features',
                 align: 'center'
             },
             subtitle: {
-                text: 'TOP 10 Ataques',
+                text: 'TOP 10 Features',
                 align: 'center'
             },
             xAxis: {
@@ -268,7 +318,7 @@ const DashboardMetricas = () => {
             yAxis: {
                 min: 0,
                 title: {
-                    text: 'Total em valor',
+                    text: 'Maior influência',
                     align: 'high'
                 },
                 labels: {
@@ -302,6 +352,67 @@ const DashboardMetricas = () => {
 
 
         setChartOptionsAtaquesPrincipais(JSON.parse(JSON.stringify(optionsTopOportunidades)))
+    }
+
+    const mountGraphBarBinario = (labels, data) => {
+        var optionsTopOportunidades = {
+            chart: {
+                type: 'bar',
+                height: 350,
+            },
+            title: {
+                text: 'Top Features',
+                align: 'center'
+            },
+            subtitle: {
+                text: 'TOP 10 Features',
+                align: 'center'
+            },
+            xAxis: {
+                categories: labels,
+                title: {
+                    text: null
+                },
+                gridLineWidth: 1,
+                lineWidth: 0
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Maior influência',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                },
+                gridLineWidth: 0
+            },
+            tooltip: {
+                valueSuffix: ''
+            },
+            plotOptions: {
+                bar: {
+                    borderRadius: '50%',
+                    dataLabels: {
+                        enabled: true
+                    },
+                    groupPadding: 0.1
+                }
+            },
+            legend: {
+                enabled: false // Aqui desativa completamente a legenda
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Valor',
+                data: data
+            }]
+        };
+
+
+        setChartOptionsAtaquesBinario(JSON.parse(JSON.stringify(optionsTopOportunidades)))
     }
 
     const mountGraphPieFactors = (data) => {
@@ -402,11 +513,11 @@ const DashboardMetricas = () => {
                 enabled: false
             },
             series: [{
-                name: 'Quantidade',
+                name: 'Acurácia "Normal"',
                 type: 'column',
                 data: data,        
             }, {
-                name: 'Picos',
+                name: 'Valor Max',
                 type: 'spline',
                 data: data,
             }]
@@ -535,7 +646,7 @@ const DashboardMetricas = () => {
                                 <DefaultDivider orientation={"vertical"} title={""} />
 
                                 <DefaultDiv width={"70%"}>
-                                    <HighchartsReact highcharts={Highcharts} options={chartOptionsAtaquesPrincipais} />
+                                    <HighchartsReact highcharts={Highcharts} options={chartOptionsAtaquesBinario} />
 
                                 </DefaultDiv>
                                 

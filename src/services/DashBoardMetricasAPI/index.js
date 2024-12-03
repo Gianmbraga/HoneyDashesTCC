@@ -51,6 +51,18 @@ export const dashboardMetricasAPI = {
         return response;
     },
 
+    getTopFeaturesNormal: async (algoritmo) => {
+
+        var response = await get(`metrics/top-features?modelo=${algoritmo}`);
+        return response;
+    },
+
+    getTopFeaturesBinario: async (algoritmo) => {
+        const response = await get(`metrics/binary/top-features?modelo=${encodeURIComponent(algoritmo)}`);
+        return response;
+    },
+    
+
 
 
     
