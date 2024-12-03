@@ -40,7 +40,6 @@ public class ModeloDeDadosService {
         return repository.findBinaryTopFeaturesByModel(modelo);
     }
 
-
     /**
      * Soma o total de ataques para um modelo específico.
      */
@@ -57,6 +56,14 @@ public class ModeloDeDadosService {
     //acuracia
     public Double getModelAccuracy(String modelo) {
         Double accuracy = repository.getAccuracyByModel(modelo);
+        if (accuracy == null) {
+            throw new IllegalArgumentException("Modelo não encontrado ou acurácia indisponível: " + modelo);
+        }
+        return accuracy;
+    }
+
+    public Double getClassAccuracy(String modelo) {
+        Double accuracy = repository.getAccuracyByModelClass(modelo);
         if (accuracy == null) {
             throw new IllegalArgumentException("Modelo não encontrado ou acurácia indisponível: " + modelo);
         }

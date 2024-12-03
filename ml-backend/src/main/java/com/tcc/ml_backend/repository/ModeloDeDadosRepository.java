@@ -112,37 +112,6 @@ public class ModeloDeDadosRepository {
         return 0;
     }
 
-    public Double getAccuracyByModel(String modelo) {
-        Query query = new Query();
-        query.fields().include("binary." + modelo + ".normal.class_report.accuracy");
-
-        Map result = mongoTemplate.findOne(query, Map.class, "statistics");
-
-        if (result != null) {
-            Map<?, ?> binary = (Map<?, ?>) result.get("binary");
-            if (binary != null) {
-                Map<?, ?> modelData = (Map<?, ?>) binary.get(modelo);
-                if (modelData != null) {
-                    Map<?, ?> normal = (Map<?, ?>) modelData.get("normal");
-                    if (normal != null) {
-                        Map<?, ?> classReport = (Map<?, ?>) normal.get("class_report");
-                        if (classReport != null) {
-                            Object accuracyValue = classReport.get("accuracy");
-                            // Verifica o tipo e converte para Double
-                            if (accuracyValue instanceof Integer) {
-                                return ((Integer) accuracyValue).doubleValue();
-                            } else if (accuracyValue instanceof Double) {
-                                return (Double) accuracyValue;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return null; // Retorna null se não encontrar o dado
-    }
-
-
     public double averagePrecisionByModel(String modelo) {
         Query query = new Query();
         query.fields().include("binary." + modelo + ".normal.class_report");
@@ -183,5 +152,67 @@ public class ModeloDeDadosRepository {
         }
         return 0;
     }
+
+    public Double getAccuracyByModelClass(String modelo) {
+        Query query = new Query();
+        query.fields().include("class." + modelo + ".normal.class_report.accuracy");
+
+        Map result = mongoTemplate.findOne(query, Map.class, "statistics");
+
+        if (result != null) {
+            Map<?, ?> binary = (Map<?, ?>) result.get("class");
+            if (binary != null) {
+                Map<?, ?> modelData = (Map<?, ?>) binary.get(modelo);
+                if (modelData != null) {
+                    Map<?, ?> normal = (Map<?, ?>) modelData.get("normal");
+                    if (normal != null) {
+                        Map<?, ?> classReport = (Map<?, ?>) normal.get("class_report");
+                        if (classReport != null) {
+                            Object accuracyValue = classReport.get("accuracy");
+                            // Verifica o tipo e converte para Double
+                            if (accuracyValue instanceof Integer) {
+                                return ((Integer) accuracyValue).doubleValue();
+                            } else if (accuracyValue instanceof Double) {
+                                return (Double) accuracyValue;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null; // Retorna null se não encontrar o dado
+    }
+
+
+    public Double getAccuracyByModel(String modelo) {
+        Query query = new Query();
+        query.fields().include("binary." + modelo + ".normal.class_report.accuracy");
+
+        Map result = mongoTemplate.findOne(query, Map.class, "statistics");
+
+        if (result != null) {
+            Map<?, ?> binary = (Map<?, ?>) result.get("binary");
+            if (binary != null) {
+                Map<?, ?> modelData = (Map<?, ?>) binary.get(modelo);
+                if (modelData != null) {
+                    Map<?, ?> normal = (Map<?, ?>) modelData.get("normal");
+                    if (normal != null) {
+                        Map<?, ?> classReport = (Map<?, ?>) normal.get("class_report");
+                        if (classReport != null) {
+                            Object accuracyValue = classReport.get("accuracy");
+                            // Verifica o tipo e converte para Double
+                            if (accuracyValue instanceof Integer) {
+                                return ((Integer) accuracyValue).doubleValue();
+                            } else if (accuracyValue instanceof Double) {
+                                return (Double) accuracyValue;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null; // Retorna null se não encontrar o dado
+    }
+
 
 }

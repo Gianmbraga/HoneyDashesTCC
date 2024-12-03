@@ -83,5 +83,12 @@ public class ModeloDeDadosController {
         return service.getAveragePrecision(modelo);
     }
 
+    @GetMapping("/metrics/accuracyClass")
+    public ResponseEntity<Double> getClassAccuracy(@RequestParam String modelo) {
+        Double accuracy = service.getClassAccuracy(modelo);
+        return ResponseEntity.ok(accuracy);
+    }
+
+
 
 }
