@@ -71,10 +71,17 @@ public class ModeloDeDadosService {
     }
 
     /**
-     * Calcula a precisão média para um modelo específico.
+     * Calcula a precisão para um modelo específico.
      */
-    public double getAveragePrecision(String modelo) {
-        return repository.averagePrecisionByModel(modelo);
+    public double getWeightedAvgPrecision(String modelo) {
+        return repository.weightedAvgPrecisionByModel(modelo);
+    }
+
+    public double getWeightedAvgPrecisionClass(String modelo) {
+        return repository.weightedAvgPrecisionByModelClass(modelo);
+    }
+    public Map<String, Integer> getSupportValuesByModel(String modelo) {
+        return repository.getSupportValuesByModel(modelo);
     }
 
 }

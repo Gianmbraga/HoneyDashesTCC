@@ -4,6 +4,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Repository
@@ -112,12 +114,15 @@ public class ModeloDeDadosRepository {
         return 0;
     }
 
-    public double averagePrecisionByModel(String modelo) {
+    public double weightedAvgPrecisionByModel(String modelo) {
+        // Define a query que inclui apenas a hierarquia necessária
         Query query = new Query();
-        query.fields().include("binary." + modelo + ".normal.class_report");
+        query.fields().include("binary." + modelo + ".normal.class_report.weighted avg");
 
+        // Realiza a busca no MongoDB
         Map result = mongoTemplate.findOne(query, Map.class, "statistics");
 
+        // Extrai o valor de precision do weighted avg, se existir
         if (result != null) {
             Map<?, ?> binary = (Map<?, ?>) result.get("binary");
             if (binary != null) {
@@ -127,29 +132,57 @@ public class ModeloDeDadosRepository {
                     if (normal != null) {
                         Map<?, ?> classReport = (Map<?, ?>) normal.get("class_report");
                         if (classReport != null) {
-                            double totalPrecision = 0;
-                            int count = 0;
-
-                            for (Object value : classReport.values()) {
-                                if (value instanceof Map) {
-                                    Object precision = ((Map<?, ?>) value).get("precision");
-                                    if (precision != null) {
-                                        // Tratar valores como Double ou Integer
-                                        if (precision instanceof Integer) {
-                                            totalPrecision += ((Integer) precision).doubleValue();
-                                        } else if (precision instanceof Double) {
-                                            totalPrecision += (Double) precision;
-                                        }
-                                        count++;
-                                    }
+                            Map<?, ?> weightedAvg = (Map<?, ?>) classReport.get("weighted avg");
+                            if (weightedAvg != null) {
+                                Object precision = weightedAvg.get("precision");
+                                if (precision instanceof Double) {
+                                    return (Double) precision;
+                                } else if (precision instanceof Integer) {
+                                    return ((Integer) precision).doubleValue();
                                 }
                             }
-                            return count > 0 ? totalPrecision / count : 0;
                         }
                     }
                 }
             }
         }
+        // Retorna 0 se nenhum valor válido for encontrado
+        return 0;
+    }
+
+    public double weightedAvgPrecisionByModelClass(String modelo) {
+        // Define a query que inclui apenas a hierarquia necessária
+        Query query = new Query();
+        query.fields().include("class." + modelo + ".normal.class_report.weighted avg");
+
+        // Realiza a busca no MongoDB
+        Map result = mongoTemplate.findOne(query, Map.class, "statistics");
+
+        // Extrai o valor de precision do weighted avg, se existir
+        if (result != null) {
+            Map<?, ?> binary = (Map<?, ?>) result.get("class");
+            if (binary != null) {
+                Map<?, ?> modelData = (Map<?, ?>) binary.get(modelo);
+                if (modelData != null) {
+                    Map<?, ?> normal = (Map<?, ?>) modelData.get("normal");
+                    if (normal != null) {
+                        Map<?, ?> classReport = (Map<?, ?>) normal.get("class_report");
+                        if (classReport != null) {
+                            Map<?, ?> weightedAvg = (Map<?, ?>) classReport.get("weighted avg");
+                            if (weightedAvg != null) {
+                                Object precision = weightedAvg.get("precision");
+                                if (precision instanceof Double) {
+                                    return (Double) precision;
+                                } else if (precision instanceof Integer) {
+                                    return ((Integer) precision).doubleValue();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Retorna 0 se nenhum valor válido for encontrado
         return 0;
     }
 
@@ -214,5 +247,46 @@ public class ModeloDeDadosRepository {
         return null; // Retorna null se não encontrar o dado
     }
 
+    public Map<String, Integer> getSupportValuesByModel(String modelo) {
+        // Cria a query para incluir apenas os dados necessários
+        Query query = new Query();
+        query.fields().include("class." + modelo + ".normal.class_report");
 
+        // Busca o documento no MongoDB
+        Map result = mongoTemplate.findOne(query, Map.class, "statistics");
+
+        // Validações de existência de dados
+        if (result != null) {
+            Map<?, ?> classData = (Map<?, ?>) result.get("class");
+            if (classData != null) {
+                Map<?, ?> modelData = (Map<?, ?>) classData.get(modelo);
+                if (modelData != null) {
+                    Map<?, ?> normalData = (Map<?, ?>) modelData.get("normal");
+                    if (normalData != null) {
+                        Map<?, ?> classReport = (Map<?, ?>) normalData.get("class_report");
+                        if (classReport != null) {
+                            Map<String, Integer> supportValues = new HashMap<>();
+
+                            // Itera sobre os tipos de ataque para pegar os valores de support
+                            for (Map.Entry<?, ?> entry : classReport.entrySet()) {
+                                String attackType = (String) entry.getKey();
+                                Object value = entry.getValue();
+                                if (value instanceof Map) {
+                                    Object support = ((Map<?, ?>) value).get("support");
+                                    if (support instanceof Integer) {
+                                        supportValues.put(attackType, (Integer) support);
+                                    }
+                                }
+                            }
+
+                            return supportValues;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Retorna um mapa vazio caso nenhum dado seja encontrado
+        return Collections.emptyMap();
+    }
 }

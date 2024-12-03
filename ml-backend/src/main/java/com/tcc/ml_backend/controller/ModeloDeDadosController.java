@@ -78,9 +78,14 @@ public class ModeloDeDadosController {
     /**
      * Endpoint para obter a precisão média do modelo.
      */
-    @GetMapping("/metrics/precision/average")
-    public double getAveragePrecision(@RequestParam String modelo) {
-        return service.getAveragePrecision(modelo);
+    @GetMapping("/metrics/precision/weighted")
+    public double getWeightedPrecision(@RequestParam String modelo) {
+        return service.getWeightedAvgPrecision(modelo);
+    }
+
+    @GetMapping("/metrics/precision/weightedClass")
+    public double getWeightedPrecisionClass(@RequestParam String modelo) {
+        return service.getWeightedAvgPrecisionClass(modelo);
     }
 
     @GetMapping("/metrics/accuracyClass")
@@ -88,6 +93,21 @@ public class ModeloDeDadosController {
         Double accuracy = service.getClassAccuracy(modelo);
         return ResponseEntity.ok(accuracy);
     }
+
+    /**
+     * Endpoint para buscar os valores de support por modelo.
+     *
+     * @param modelo Nome do modelo (ex.: GNB, KNN).
+     * @return Mapa com os tipos de ataque e seus respectivos valores de support.
+     */
+    @GetMapping("/metrics/support")
+    public ResponseEntity<Map<String, Integer>> getSupportValues(@RequestParam String modelo) {
+        Map<String, Integer> supportValues = service.getSupportValuesByModel(modelo);
+        return ResponseEntity.ok(supportValues);
+    }
+
+
+
 
 
 
