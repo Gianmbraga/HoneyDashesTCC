@@ -38,8 +38,8 @@
 }
 
 html, body {
-  overflow-x: hidden;  /* Remove o scroll horizontal */
-  overflow-y: hidden;  /* Remove o scroll vertical */
+  /* overflow-x: hidden;  
+  overflow-y: hidden;   */
   height: 100%;
   margin: 0;
   padding: 0;

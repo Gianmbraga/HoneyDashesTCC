@@ -26,6 +26,8 @@ const DashboardKNN = () => {
     const [chartOptionsInfluenciadores, setChartOptionsInfluenciadores] = useState(null);
     const [chartOptionsFooter, setChartOptionsFooter] = useState(null);
 
+    const [chartMetricsFooter, setChartMetricsFooter] = useState(null)
+
     //variables for graphs
 
     const [totalAtaques, setTotalAtaques] = useState("")
@@ -77,6 +79,11 @@ const DashboardKNN = () => {
 
         getAccuracyBinario();
         getPrecisaoBinario();
+        getAllMetricas();
+
+
+        mountGraphMetrics()
+
         //MONTAR GRAFIOS
         mountGraphPieFactors([
             {
@@ -127,6 +134,39 @@ const DashboardKNN = () => {
         
     }, [])
 
+
+    const getAllMetricas = async () => {
+        setIsLoading(true);
+    
+        try {
+            // Faz a requisição à API para obter as métricas
+            const response = await dashboardMetricasAPI.getAllMetricas('SVM');
+            console.log("MÉTRICAS: ", response);
+    
+            if (response.success && response.data) {
+                // Filtra os dados para remover campos indesejados
+                const filteredMetrics = Object.entries(response.data).filter(
+                    ([key]) => key !== 'Normal' && key !== 'weighted avg' && key !== 'macro avg'
+                );
+    
+                // Ordena os dados filtrados em ordem decrescente pelos valores
+                const sortedMetrics = filteredMetrics.sort(([, valueA], [, valueB]) => valueB - valueA);
+    
+                // Gera listas separadas de labels (nomes das categorias) e valores
+                const labels = sortedMetrics.map(([key]) => key); // Extrai os nomes das categorias
+                const values = sortedMetrics.map(([, value]) => value); // Extrai os valores correspondentes
+    
+                // Monta o gráfico com as listas geradas
+                mountGraphMetrics(labels, values);
+            }
+        } catch (error) {
+            console.error("Erro ao obter métricas:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+    
 
     const getMetricas = async() => {
 
@@ -542,7 +582,6 @@ const DashboardKNN = () => {
                 zooming: {
                     type: 'xy'
                 },
-                height: 150,
             },
             title: {
                 text: 'Uso de PCA',
@@ -597,6 +636,49 @@ const DashboardKNN = () => {
         };
     
         setChartOptionsFooter(JSON.parse(JSON.stringify(optionsGraphFooter)));
+    };
+
+    const mountGraphMetrics = (labels, data) => {
+        var optionsGraphFooter = {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Tipos de ataque',
+                align: 'left'
+            },
+            xAxis: {
+                categories: labels,
+                crosshair: true,
+                accessibility: {
+                    description: 'Countries'
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Quantidade'
+                }
+            },
+            plotOptions: {
+                column: {
+                    pointPadding: 0.2,
+                    borderWidth: 0
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            series: [
+                {
+                    name: 'Ataques',
+                    data: data,
+                    color: "#fdb700" 
+                }
+            ]
+        };
+    
+        setChartMetricsFooter(JSON.parse(JSON.stringify(optionsGraphFooter)));
     };
     
 
@@ -734,12 +816,25 @@ const DashboardKNN = () => {
 
                 <DefaultDivider isFullLine />
 
-                <DefaultDiv>
+                <DefaultRow>
+                    <DefaultDiv>
+                        <DefaultCard>
+                            <HighchartsReact highcharts={Highcharts} options={chartOptionsFooter} />
+                            
+                        </DefaultCard>
+                    </DefaultDiv>
+                    
+                    <DefaultDivider orientation={"vertical"} title={""} />
+
+                    <DefaultDiv>
                     <DefaultCard>
-                        <HighchartsReact highcharts={Highcharts} options={chartOptionsFooter} />
+                        <HighchartsReact highcharts={Highcharts} options={chartMetricsFooter} />
                         
                     </DefaultCard>
                 </DefaultDiv>
+
+                </DefaultRow>
+                
                 
             </DefaultDiv>
         </BlockUI>

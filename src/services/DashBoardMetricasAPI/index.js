@@ -85,6 +85,12 @@ export const dashboardMetricasAPI = {
         const response = await get(`metrics/binary/top-features?modelo=${encodeURIComponent(algoritmo)}`);
         return response;
     },
+
+
+    getAllMetricas: async (algoritmo) => {
+        const response = await get(`metrics/support?modelo=${algoritmo}`);
+        return response;
+    },
     
 
 
