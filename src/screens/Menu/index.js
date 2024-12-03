@@ -30,11 +30,19 @@ const Menu = () => {
         console.log("funcionou: ", currentScreen)
 
         if(currentScreen.id === 1){
-            navigate("/DashboardMetricas")
+            navigate("/RandomForest")
         }
 
         if(currentScreen.id === 2){
-            navigate("/DashboardElements")
+            navigate("/SVM")
+        }
+
+        if(currentScreen.id === 3){
+            navigate("/KNN")
+        }
+
+        if(currentScreen.id === 4){
+            navigate("/GNB")
         }
     }
 
@@ -60,11 +68,10 @@ const Menu = () => {
                                     <DefaultColumn margin={"15px 0 0 0"}>
                                         <DefaultDropdown  height={"45px"}
                                             options={[
-                                                { id: 1, nome: "Screen 1" },
-                                                { id: 2, nome: "Screen 2" },
-                                                { id: 3, nome: "Screen 3" },
-                                                { id: 4, nome: "Screen 4" },
-                                                { id: 5, nome: "Screen 5" }
+                                                { id: 1, nome: "Random Forest" },
+                                                { id: 2, nome: "SVM" },
+                                                { id: 3, nome: "KNN" },
+                                                { id: 4, nome: "Naive Bayes"},
                                             ]} 
                                             showClear optionsLabel={"nome"} valueState={currentScreen} setValueState={(e) => setCurrentScreen(e.target.value)}
                                         />

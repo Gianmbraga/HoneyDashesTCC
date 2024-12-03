@@ -16,9 +16,9 @@ import HighchartsReact from 'highcharts-react-official';
 import Highcharts from 'highcharts';
 import { dashboardMetricasAPI } from "../../services/DashBoardMetricasAPI";
 
- 
 
-const DashboardElements = () => {
+
+const DashboardGNB = () => {
 
     // useEffect(async () => {
 
@@ -30,6 +30,8 @@ const DashboardElements = () => {
 
     useEffect(() => {
         setIsLoading(true);
+
+        getMetricas();
 
         const timer = setTimeout(() => {
             setIsLoading(false);
@@ -108,12 +110,13 @@ const DashboardElements = () => {
     }, [])
 
 
-    const fillGruposAcesso = async() => {
+    const getMetricas = async() => {
 
         setIsLoading(true);
 
-        var response = await dashboardMetricasAPI.getAll();
-        console.log(response)
+        var response = await dashboardMetricasAPI.getAllAttacks('KNN');
+
+        console.log("resp aqui: ", response)
             // if(response.success && response.data){
             //     setGruposAcesso(response.data);
             // }
@@ -298,7 +301,7 @@ const DashboardElements = () => {
 
     return (
         <BlockUI blocked={isLoading} fullScreen template={<i className="pi pi-clock" style={{ fontSize: '3rem' }}></i>}>
-            <DefaultTitle title={"Ataques"}  subtitle={"Aqui você encontra os ataque realizados"} description={"aqui veremos os ataques"}/>
+            <DefaultTitle title={"Naive Bayes"}  subtitle={"Aqui você encontra os ataque realizados"} description={"aqui veremos os ataques"}/>
 
 
             <DefaultDiv padding={"0 15px"}>
@@ -363,9 +366,68 @@ const DashboardElements = () => {
                         
                         <DefaultDivider orientation={"vertical"} title={""} />
 
-                    <DefaultCard>
+                    {/* <DefaultCard>
                         <HighchartsReact highcharts={Highcharts} options={chartOptionsInfluenciadores} />
-                    </DefaultCard>
+                    </DefaultCard> */}
+
+
+                        <DefaultDiv height={"100%"}>
+
+                        <DefaultCard>
+                            <DefaultRow>
+                                
+                                <DefaultDiv width={"30%"}>
+                                    
+
+                                    <DefaultColumn alignItems={"center"} justifyContent={"center"}>
+                                        <DefaultLabel fontWeight={"bold"} fontSize={"20px"} title={"Destaques"} />
+                                    </DefaultColumn>
+
+                                    <DefaultColumn justifyContent={"space-between"} style={{ height: '85%' }}>
+                                        {/* Informações importantes */}
+                                        <DefaultRow>
+                                            <i className="pi pi-bolt" style={{ fontSize: '24px', color: '#FF5733' }}></i>
+                                            <DefaultLabel title={"Total de ataques: 3,500"} fontSize={"16px"} fontWeight={"bold"} />
+                                        </DefaultRow>
+                                        
+                                        <DefaultRow>
+                                            <i className="pi pi-desktop" style={{ fontSize: '24px', color: '#3498DB' }}></i>
+                                            <DefaultLabel title={"Ataque mais comum: DDoS (1,200 vezes)"} fontSize={"16px"} />
+                                        </DefaultRow>
+
+                                        <DefaultRow>
+                                            <i className="pi pi-globe" style={{ fontSize: '24px', color: '#2ECC71' }}></i>
+                                            <DefaultLabel title={"Região mais afetada: América do Norte"} fontSize={"16px"} />
+                                        </DefaultRow>
+
+                                        <DefaultRow>
+                                            <i className="pi pi-stopwatch" style={{ fontSize: '24px', color: '#F1C40F' }}></i>
+                                            <DefaultLabel title={"Tempo médio de resposta: 5 minutos"} fontSize={"16px"} />
+                                        </DefaultRow>
+
+                                        <DefaultRow>
+                                            <i className="pi pi-shield" style={{ fontSize: '24px', color: '#E74C3C' }}></i>
+                                            <DefaultLabel title={"Ataques bloqueados: 85%"} fontSize={"16px"} />
+                                        </DefaultRow>
+                                    </DefaultColumn>
+
+
+
+
+                                </DefaultDiv>
+
+                                <DefaultDivider orientation={"vertical"} title={""} />
+
+                                <DefaultDiv width={"70%"}>
+                                    <HighchartsReact highcharts={Highcharts} options={chartOptionsAtaquesPrincipais} />
+
+                                </DefaultDiv>
+                                
+                            </DefaultRow>
+
+                        </DefaultCard>
+
+                        </DefaultDiv>
                 </DefaultRow>
 
                 <DefaultDivider isFullLine />
@@ -382,4 +444,4 @@ const DashboardElements = () => {
     )
 }
 
-export default DashboardElements;
+export default DashboardGNB;

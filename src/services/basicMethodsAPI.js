@@ -1,133 +1,117 @@
 import axios from 'axios';
-// import { storage } from '../utils/StorageHelper';
 
+// Função para montar os headers, caso precise de algo adicional no futuro
 const mountHeader = async () => {
     return {
-        'cache-control': "no-cache",
-        'Transfer-Encoding': "chunked",
-        'Content-Type': 'application/json; charset=utf-8',
-        'Accept': "*/*",
-        'Access-Control-Allow-Origin': "*",
-        // 'Authorization': `Bearer ${storage.getToken()}`
+        'Content-Type': 'application/json',
+        'Accept': '*/*',
+        'Cache-Control': 'no-cache',
     };
 };
 
-const apiUrl = process.env.REACT_APP_API_URL;
+// URL base da API (substitua pelo seu endpoint da AWS, se necessário)
+const apiUrl = process.env.REACT_APP_API_URL; // Alterar para URL da AWS em produção
 
-// Função para requisição POST
-export const post = async (url, data) => {
-    let result = null;
-    if (process.env.NODE_ENV === "development") console.log(apiUrl + url);
+// Criando uma instância do Axios com configuração de autenticação
+const api = axios.create({
+    baseURL: apiUrl,
+    timeout: 15000, // Timeout de 15 segundos
+    auth: {
+        username: 'admin', // Substitua pelo username configurado no backend
+        password: 'admin123', // Substitua pela senha configurada no backend
+    },
+});
 
-    try {
-        const response = await axios.post(
-            apiUrl + url,
-            data,
-            {
-                headers: await mountHeader(),
-                timeout: 15000
-            }
-        );
-
-        result = {
-            success: true,
-            data: response.data,
-            message: null
-        };
-    } catch (e) {
-        result = {
-            success: false,
-            data: null,
-            message: e
-        };
-    }
-
-    return result;
-};
-
-// Função para requisição PUT
-export const put = async (url, data) => {
-    let result = null;
-    if (process.env.NODE_ENV === "development") console.log(apiUrl + url);
-
-    try {
-        const response = await axios.put(
-            apiUrl + url,
-            data,
-            {
-                headers: await mountHeader(),
-                timeout: 15000
-            }
-        );
-
-        result = {
-            success: true,
-            data: response.data,
-            message: null
-        };
-    } catch (e) {
-        result = {
-            success: false,
-            data: null,
-            message: e
-        };
-    }
-
-    return result;
-};
-
-// Função para requisição DELETE
-export const del = async (url, data) => {
-    let result = null;
-    if (process.env.NODE_ENV === "development") console.log(apiUrl + url);
-
-    try {
-        const response = await axios.delete(
-            apiUrl + url,
-            {
-                data: data,
-                headers: await mountHeader()
-            }
-        );
-
-        result = {
-            success: true,
-            data: response.data,
-            message: null
-        };
-    } catch (e) {
-        result = {
-            success: false,
-            data: null,
-            message: e
-        };
-    }
-
-    return result;
-};
-
-// Função para requisição GET
+// Função para requisições GET
 export const get = async (url) => {
     let result = null;
     try {
-        const response = await axios.get(
-            apiUrl + url,
-            {
-                headers: await mountHeader(),
-                timeout: 15000
-            }
-        );
+        const response = await api.get(url, {
+            headers: await mountHeader(),
+        });
 
         result = {
             success: true,
             data: response.data,
-            message: null
+            message: null,
         };
     } catch (e) {
         result = {
             success: false,
             data: null,
-            message: e
+            message: e.response?.data?.message || e.message || 'Erro desconhecido',
+        };
+    }
+
+    return result;
+};
+
+// Função para requisições POST
+export const post = async (url, data) => {
+    let result = null;
+    try {
+        const response = await api.post(url, data, {
+            headers: await mountHeader(),
+        });
+
+        result = {
+            success: true,
+            data: response.data,
+            message: null,
+        };
+    } catch (e) {
+        result = {
+            success: false,
+            data: null,
+            message: e.response?.data?.message || e.message || 'Erro desconhecido',
+        };
+    }
+
+    return result;
+};
+
+// Função para requisições PUT
+export const put = async (url, data) => {
+    let result = null;
+    try {
+        const response = await api.put(url, data, {
+            headers: await mountHeader(),
+        });
+
+        result = {
+            success: true,
+            data: response.data,
+            message: null,
+        };
+    } catch (e) {
+        result = {
+            success: false,
+            data: null,
+            message: e.response?.data?.message || e.message || 'Erro desconhecido',
+        };
+    }
+
+    return result;
+};
+
+// Função para requisições DELETE
+export const del = async (url) => {
+    let result = null;
+    try {
+        const response = await api.delete(url, {
+            headers: await mountHeader(),
+        });
+
+        result = {
+            success: true,
+            data: response.data,
+            message: null,
+        };
+    } catch (e) {
+        result = {
+            success: false,
+            data: null,
+            message: e.response?.data?.message || e.message || 'Erro desconhecido',
         };
     }
 
